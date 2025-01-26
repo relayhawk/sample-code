@@ -89,7 +89,8 @@ async def test_openai_connection_setup(openai_service):
                 "voice": "test_voice",
                 "instructions": "test system message",
                 "modalities": ["text", "audio"],
-                "temperature": 0.8
+                "temperature": 0.8,
+                "tools": []
             }
         }))
 
