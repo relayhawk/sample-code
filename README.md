@@ -2,7 +2,7 @@
 
 Welcome to the **Relay Hawk Sample Code Repository**! This repository showcases sample projects and integrations designed to help developers and businesses streamline workflows, enhance operational efficiency, and explore cutting-edge technologies in real-time communication, AI, and API integrations.
 
-Relay Hawk specializes in **white-glove implementation of integrations** and **low-latency AI phone bots**. Our solutions help address industry pain points by seamlessly connecting tools like CRMs, ticketing systems, and more, enabling faster call resolutions and improving caller experiences.
+Relay Hawk specializes in **white-glove implementation of integrations** and **low-latency AI tools**. Our solutions help address industry pain points by seamlessly connecting tools like CRMs, ticketing systems, phone systems, and more, enabling faster resolutions of your customer's requests and improved internal workflows.
 
 ---
 
