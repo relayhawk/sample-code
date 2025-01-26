@@ -22,10 +22,12 @@ class OpenAIService:
             self.tools[tool_name] = tool
             self.logger.info(f"Registered tool: {tool_name}")
 
-    async def send_initial_greeting(self, websocket, greeting: str | None = None) -> None:
+    async def send_initial_greeting(self, websocket, greeting: str | None = None, system_message: str | None = None) -> None:
         """Send an initial greeting message to start the conversation."""
+        self.logger.info("Sending initial greeting message")
         if not greeting:
-            greeting = "Greet the caller based on information in the system prompt."
+            # We need to add the system prompt to the greeting because the response is not guaranteed to reference it
+            greeting = "Greet the caller with the greeting based on the following system prompt.\n\n" + system_message
         try:
             greeting_message = {
                 "event_id": "greeting_001",
@@ -60,7 +62,7 @@ class OpenAIService:
             await self.send_session_update(websocket, system_message)
 
             # Send initial greeting
-            await self.send_initial_greeting(websocket)
+            await self.send_initial_greeting(websocket, system_message)
 
             self.logger.info("OpenAI WebSocket connection established")
             return websocket
@@ -106,12 +108,12 @@ class OpenAIService:
 
             if self.websocket and self.websocket.open:
                 await self.websocket.send_json(update_message)
-                self.logger.debug(f"Updated session with {len(tool_definitions)} tools")
+                self.logger.debug(f"Updated session with {len(tool_definitions)} tools")  # NOQA
             else:
-                self.logger.warning("Cannot update tools: WebSocket not connected")
+                self.logger.warning("Cannot update tools: WebSocket not connected")  # NOQA
 
         except Exception as e:
-            self.logger.error(f"Error updating session tools: {str(e)}", exc_info=True)
+            self.logger.error(f"Error updating session tools: {str(e)}", exc_info=True)  # NOQA
             raise
 
     async def handle_tool_call(self, tool_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
@@ -133,12 +135,13 @@ class OpenAIService:
 
         tool = self.tools[tool_name]
         try:
-            self.logger.debug(f"Calling tool {tool_name} with params: {params}")
+            self.logger.debug(
+                f"Calling tool {tool_name} with params: {params}")
             response = await tool.handle(params)
             self.logger.debug(f"Tool {tool_name} response: {response}")
             return response
         except Exception as e:
-            self.logger.error(f"Error executing tool {tool_name}: {str(e)}", exc_info=True)
+            self.logger.error(f"Error executing tool {tool_name}: {str(e)}", exc_info=True)  # NOQA#
             raise
 
     async def process_tool_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
@@ -164,7 +167,7 @@ class OpenAIService:
             }
 
         except Exception as e:
-            self.logger.error(f"Error processing tool message: {str(e)}", exc_info=True)
+            self.logger.error(f"Error processing tool message: {str(e)}", exc_info=True)  # NOQA
             return {
                 "type": "error",
                 "error": {
