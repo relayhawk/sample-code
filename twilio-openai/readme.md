@@ -60,6 +60,12 @@ sequenceDiagram
 - WebSocket Endpoint:
   - `/media-stream`: Handles real-time audio streaming
 
+### Core Components ([twilio_openai/core/](twilio_openai/core/))
+- [connection_manager.py](twilio_openai/core/connection_manager.py): Manages bidirectional WebSocket streaming
+  - Handles concurrent stream processing between services
+  - Manages async task lifecycle and error handling
+  - Ensures proper resource cleanup on disconnection
+
 ### Adapters ([twilio_openai/adapters/](twilio_openai/adapters/))
 - `TwilioOpenAIAdapter`: Bridges communication between Twilio and OpenAI
   - Handles message format translation between services
