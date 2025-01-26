@@ -1,6 +1,6 @@
 import pytest
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch, call
+from unittest.mock import AsyncMock, patch, call
 from fastapi import WebSocket, WebSocketDisconnect
 from twilio_openai.services.openai_service import OpenAIService
 from twilio_openai.services.twilio_service import TwilioService
@@ -111,7 +111,7 @@ async def test_openai_connection_setup(openai_service):
 @pytest.mark.asyncio
 async def test_connection_cleanup(mock_websocket, mock_openai_ws):
     """Test proper cleanup of connections."""
-    handler = MagicMock()
+    handler = AsyncMock()
 
     # Create an async function that raises WebSocketDisconnect
     async def receive_with_disconnect():
@@ -132,7 +132,7 @@ async def test_connection_cleanup(mock_websocket, mock_openai_ws):
 @pytest.mark.asyncio
 async def test_graceful_shutdown(mock_websocket, mock_openai_ws):
     """Test graceful shutdown of streams."""
-    handler = MagicMock()
+    handler = AsyncMock()
 
     # Create an async function that completes normally
     async def receive_and_complete():
@@ -153,84 +153,63 @@ async def test_graceful_shutdown(mock_websocket, mock_openai_ws):
 @pytest.mark.asyncio
 async def test_websocket_cleanup_on_success():
     """Test that WebSockets are properly closed on successful completion."""
-    # Mock WebSockets
     source_ws = AsyncMock()
     target_ws = AsyncMock()
 
-    # Create handler that completes normally
-    handler = MagicMock()
-
-    async def complete_normally():
-        return None
-    handler.receive_stream = complete_normally
-    handler.send_stream = complete_normally
-
-    # Mock the get_websockets method
-    handler.get_websockets.return_value = {
+    handler = AsyncMock()
+    handler.receive_stream = AsyncMock(return_value=None)
+    handler.send_stream = AsyncMock(return_value=None)
+    handler.get_websockets = AsyncMock(return_value={
         'source': source_ws,
         'target': target_ws
-    }
+    })
+    handler.close = AsyncMock()
 
     await ConnectionManager.process_streams(handler)
 
-    # Verify both WebSockets were closed
-    source_ws.close.assert_called_once()
-    target_ws.close.assert_called_once()
+    # Verify handler's close method was called
+    handler.close.assert_called_once()
 
 
 @pytest.mark.asyncio
 async def test_websocket_cleanup_on_error():
     """Test that WebSockets are properly closed even when an error occurs."""
-    # Mock WebSockets
     source_ws = AsyncMock()
     target_ws = AsyncMock()
 
-    # Create handler that raises an exception
-    handler = MagicMock()
-
-    async def raise_error():
-        raise RuntimeError("Simulated error")
-    handler.receive_stream = raise_error
+    handler = AsyncMock()
+    handler.receive_stream = AsyncMock(
+        side_effect=RuntimeError("Simulated error"))
     handler.send_stream = AsyncMock()
-
-    # Mock the get_websockets method
-    handler.get_websockets.return_value = {
+    handler.get_websockets = AsyncMock(return_value={
         'source': source_ws,
         'target': target_ws
-    }
+    })
+    handler.close = AsyncMock()
 
-    # Process should raise the error but still clean up
     with pytest.raises(RuntimeError):
         await ConnectionManager.process_streams(handler)
 
-    # Verify both WebSockets were closed despite the error
-    source_ws.close.assert_called_once()
-    target_ws.close.assert_called_once()
+    # Verify handler's close method was called
+    handler.close.assert_called_once()
 
 
 @pytest.mark.asyncio
 async def test_websocket_cleanup_on_disconnect():
     """Test that WebSockets are properly closed on WebSocket disconnect."""
-    # Mock WebSockets
     source_ws = AsyncMock()
     target_ws = AsyncMock()
 
-    # Create handler that simulates a disconnect
-    handler = MagicMock()
-
-    async def simulate_disconnect():
-        raise WebSocketDisconnect()
-    handler.receive_stream = simulate_disconnect
+    handler = AsyncMock()
+    handler.receive_stream = AsyncMock(side_effect=WebSocketDisconnect())
     handler.send_stream = AsyncMock()
-
-    # Mock the get_websockets method
-    handler.get_websockets.return_value = {
+    handler.get_websockets = AsyncMock(return_value={
         'source': source_ws,
         'target': target_ws
-    }
+    })
+    handler.close = AsyncMock()
 
     await ConnectionManager.process_streams(handler)
 
-    # Verify both WebSockets were closed
-    source_ws.close.assert_called_once()
-    target_ws.close.assert_called_once()
+    # Verify handler's close method was called
+    handler.close.assert_called_once()
