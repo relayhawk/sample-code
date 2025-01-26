@@ -90,6 +90,23 @@ sequenceDiagram
   - Generates TwiML responses
   - Sets up WebSocket connection
 
+### Prompts ([twilio_openai/prompts/](twilio_openai/prompts/))
+- **System Prompt**: The project includes a system prompt that sets the context for conversations with the OpenAI RealTime API
+  - [system_prompt.md](twilio_openai/prompts/system_prompt.md): Defines the AI assistant's behavior and capabilities
+
+### Tools ([twilio_openai/tools/](twilio_openai/tools/))
+The project supports [OpenAI function calling](https://platform.openai.com/docs/guides/function-calling) through a set of predefined tools:
+
+- **Availability Checker**: Example tool for checking date/time availability
+  - [availability.py](twilio_openai/tools/availability.py): Implements scheduling and availability logic
+  - Demonstrates tool integration with the RealTime API
+  - Shows how to structure tool responses for AI consumption
+
+Tools can be used by the AI to:
+- Access external data and services
+- Perform specific actions or calculations
+- Return structured data to inform responses
+
 ## Environment Variables
 
 ### Server Settings
@@ -192,5 +209,5 @@ To be determined.
 
 ## References
 
-- Twilio Blog - [Build an AI Voice Assistant with Twilio Voice, OpenAI’s Realtime API, and Python](https://www.twilio.com/en-us/blog/voice-ai-assistant-openai-realtime-api-python)
+- Twilio Blog - [Build an AI Voice Assistant with Twilio Voice, OpenAI's Realtime API, and Python](https://www.twilio.com/en-us/blog/voice-ai-assistant-openai-realtime-api-python)
 - [OpenAI Realtime API](https://platform.openai.com/docs/guides/realtime)
