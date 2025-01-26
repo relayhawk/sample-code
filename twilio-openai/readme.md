@@ -8,6 +8,7 @@ This project demonstrates real-time audio processing using Twilio's Media Stream
 - WebSocket handling for Twilio Media Streams
 - Secure request validation for Twilio webhooks
 - Integration with OpenAI's APIs
+- Tool usage for AI agents
 - Docker containerization for easy deployment
 
 ## Prerequisites
