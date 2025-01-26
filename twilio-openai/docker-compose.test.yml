@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  twilio_openai-test:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    volumes:
+      - ./twilio_openai:/app/twilio_openai
+      - ./tests:/app/tests
+    environment:
+      - PYTHONPATH=/app
+    command: pytest /app/tests/ -v --cov=twilio_openai --cov-report=term-missing

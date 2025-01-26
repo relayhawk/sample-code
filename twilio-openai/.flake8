@@ -1,0 +1,4 @@
+# ignore e501
+
+[flake8]
+ignore = E501

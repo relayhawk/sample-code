@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  twilio_openai:
+    build:
+      context: ./twilio_openai
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+    environment:
+      - FORWARDED_ALLOW_IPS=*
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "http"
+      - ${NGROK_URL:+--url=${NGROK_URL}}
+      - "http://twilio_openai:5001"
+    env_file:
+      - .env
+    ports:
+      - 4040:4040
