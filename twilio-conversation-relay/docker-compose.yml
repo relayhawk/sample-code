@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  relay_app:
+    build:
+      context: ./relay_app
+    ports:
+      - "5002:5002"
+    volumes:
+      - .:/app
+    environment:
+      - FORWARDED_ALLOW_IPS=*
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+  ngrok:
+    image: ngrok/ngrok:latest
+    command: >
+      http ${NGROK_URL:+--url=${NGROK_URL}} http://relay_app:5002
+    env_file:
+      - .env
+    ports:
+      - 4041:4040
