@@ -1,0 +1,6 @@
+.env
+vcon_app/captured/*.json
+sip_dialer/audio/*.wav
+__pycache__/
+*.pyc
+.DS_Store

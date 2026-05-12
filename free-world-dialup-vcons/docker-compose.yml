@@ -1,0 +1,26 @@
+services:
+  vcon_app:
+    build: ./vcon_app
+    env_file: .env
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./vcon_app/captured:/app/captured
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    command: http ${NGROK_URL:+--url=${NGROK_URL}} http://vcon_app:5002
+    env_file: .env
+    ports:
+      - "4041:4040"
+    depends_on:
+      - vcon_app
+
+  sip_dialer:
+    build: ./sip_dialer
+    env_file: .env
+    profiles:
+      - dial
+    network_mode: host
+    volumes:
+      - ./sip_dialer/audio:/audio
