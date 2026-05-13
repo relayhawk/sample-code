@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free World Dialup — vCons</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: #1a1d27;
+      border-bottom: 1px solid #2d3148;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #a78bfa;
+      letter-spacing: -0.01em;
+    }
+
+    header h1 span {
+      color: #64748b;
+      font-weight: 400;
+      font-size: 0.9rem;
+      margin-left: 0.5rem;
+    }
+
+    #reset-btn {
+      background: none;
+      border: 1px solid #374151;
+      color: #94a3b8;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    #reset-btn:hover { border-color: #6b7280; color: #e2e8f0; }
+
+    /* Auth gate */
+    #auth-gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 65px);
+      gap: 1rem;
+    }
+
+    #auth-gate h2 {
+      font-size: 1.1rem;
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    #auth-gate form {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    #api-key-input {
+      background: #1a1d27;
+      border: 1px solid #374151;
+      color: #e2e8f0;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      width: 320px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #api-key-input:focus { border-color: #7c3aed; }
+
+    #auth-gate button[type="submit"] {
+      background: #7c3aed;
+      border: none;
+      color: #fff;
+      padding: 0.5rem 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    #auth-gate button[type="submit"]:hover { background: #6d28d9; }
+
+    /* Main content */
+    #main { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    #status {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    #status.live::before {
+      content: "● ";
+      color: #22c55e;
+    }
+    #status.error::before {
+      content: "● ";
+      color: #ef4444;
+    }
+
+    #count-badge {
+      background: #312e81;
+      color: #a5b4fc;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+    }
+
+    /* vCon list */
+    #vcon-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .vcon-card {
+      background: #1a1d27;
+      border: 1px solid #2d3148;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .vcon-card:hover { border-color: #4f46e5; }
+
+    .vcon-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.25rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .vcon-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .vcon-summary {
+      font-size: 0.95rem;
+      color: #e2e8f0;
+    }
+
+    .vcon-time {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .vcon-chevron {
+      color: #4b5563;
+      font-size: 0.85rem;
+      transition: transform 0.2s;
+    }
+    .vcon-card.expanded .vcon-chevron { transform: rotate(90deg); }
+
+    .vcon-body {
+      display: none;
+      border-top: 1px solid #2d3148;
+      padding: 1rem 1.25rem;
+    }
+    .vcon-card.expanded .vcon-body { display: block; }
+
+    .vcon-body pre {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    #empty-state {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #4b5563;
+    }
+    #empty-state p { margin-top: 0.5rem; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Free World Dialup <span>vCons</span></h1>
+  <button id="reset-btn">Reset API key</button>
+</header>
+
+<!-- Auth gate — shown when no key in localStorage -->
+<div id="auth-gate">
+  <h2>Enter your UI API key to continue</h2>
+  <form id="auth-form">
+    <input id="api-key-input" type="password" placeholder="Paste API key…" autocomplete="off" />
+    <button type="submit">Save</button>
+  </form>
+</div>
+
+<!-- Main dashboard — shown once key is valid -->
+<div id="main">
+  <div class="toolbar">
+    <div id="status">connecting…</div>
+    <span id="count-badge">0 vCons</span>
+  </div>
+  <div id="vcon-list"></div>
+  <div id="empty-state">
+    <div style="font-size:2.5rem;">📭</div>
+    <p>No vCons yet. Place a call to see them appear here.</p>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
