@@ -6,7 +6,7 @@ A collection of small, practical customizations for [Claude Code](https://claude
 
 ### [Subagent Status Line: Show the Model of Each Subagent](subagent-statusline/)
 
-Add the model name (e.g., `claude-haiku-4-5-20251001`) to the subagent status line so you always know which model each subagent is running on, along with its task description and token usage.
+Add the model name (e.g., `claude-haiku-4-5-20251001`) to the subagent status line. The default status line already shows the task and token count — adding the model lets you catch an expensive model (like Fable 5) delegating to another expensive agent before it eats your token limits.
 
 ---
 

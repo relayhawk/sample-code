@@ -1,10 +1,14 @@
 # Subagent Status Line: Show the Model of Each Subagent
 
-By default, Claude Code's subagent status line doesn't tell you **which model** each subagent is running on. With a small custom status line script, you can see the model, task description, and token usage for every running subagent at a glance.
+Claude Code's default subagent status line already shows the task description and token usage — but not **which model** each subagent is running on. This small custom status line script adds the model to the line.
 
 ![Subagent status line showing the model of the subagent](screenshot.png)
 
-In the screenshot above, the status line shows the subagent is running `claude-haiku-4-5-20251001` — useful when you're delegating cheap tasks to Haiku while your main session runs a more capable model.
+## Why This Matters
+
+When your main session runs an expensive model like Fable 5, subagents inherit that model unless you (or Claude) say otherwise. That means a Fable session can quietly delegate work to *another Fable agent* — and burn through your token limits much faster than you expected.
+
+With the model in the status line, you can see at a glance when a subagent is running on a pricier model than the task needs, and interrupt or redirect before it eats your usage. In the screenshot above, the subagent is confirmed to be running `claude-haiku-4-5-20251001` — a cheap model for a cheap task.
 
 ## What You Get
 
@@ -14,10 +18,7 @@ Each subagent's status line will show:
 local_agent · claude-haiku-4-5-20251001 · Echo, sleep, done message · ↓ 28.8k tokens
 ```
 
-- **Type** of the subagent (e.g., `local_agent`)
-- **Model** the subagent is running on
-- **Description** of the task
-- **Token count**, nicely formatted (e.g., `28.8k`)
+The **model** is the new piece of information; the type, description, and token count are also included so the line stays a full replacement for the default.
 
 ## Setup
 

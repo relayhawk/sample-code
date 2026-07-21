@@ -26,7 +26,7 @@ For details, see the [Twilio + OpenAI README](twilio-openai/).
 A growing collection of practical customizations for **Claude Code**, Anthropic's agentic coding tool.
 
 #### **Included So Far:**
-- [Subagent Status Line](claude-code/subagent-statusline/): Show the model, task description, and token usage of each subagent right in your status line.
+- [Subagent Status Line](claude-code/subagent-statusline/): Add the model of each subagent to the status line, so an expensive model can't quietly delegate to another expensive agent and burn your token limits.
 
 For details, see the [Claude Code Customizations README](claude-code/).
 
