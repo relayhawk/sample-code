@@ -1,16 +1,55 @@
 # Call Transcriber: Live Transcripts of Both Sides of a Call on macOS
 
-A small command-line tool that writes a live transcript of your Zoom, Meet, Teams or softphone call to a text file, one line per finished sentence, labelled by side:
+Put [Claude Code](https://claude.com/claude-code) on your calls. This tool streams a live transcript of both sides of a Zoom, Meet or Teams call to a file. Claude reads it as the call happens and does the work behind the scenes: it looks things up, answers questions, sets things up and keeps your notes, so you don't have to say "let me get back to you."
+
+## What That Looks Like
+
+You're on a sales call. The prospect asks two technical questions you can't answer from memory:
 
 ```
-[13:47:27] Me: Good morning. This is Sam from the product team.
-[13:47:41] Them: Hello. Our next meeting is October 12 at 10 AM.
-[13:47:52] Them 2: And the number to call is (555) 010-0199.
+[14:02:11] Them: Before we go further, do you integrate with Salesforce?
+           We'd need call notes on the contact record.
+[14:02:19] Me: Let me check on that for you.
+[14:02:31] Them 2: And is there a cap on API calls? We'd push about 5,000 a day.
 ```
 
-No bot joins the meeting and nothing is installed into the call app. `Me` is your microphone. `Them` is whatever your Mac plays, captured straight from the audio output, so it works on speakers or headphones and with any call app.
+While you keep talking, Claude, running in your product's repo:
 
-It was built so [Claude Code](https://claude.com/claude-code) can watch the transcript during a call and keep a notes doc of decisions, open questions and follow-ups up to date while you talk. The [skill](#use-it-with-claude-code) included here teaches Claude how to do that.
+- searches the integrations code and finds that the Salesforce sync writes call notes to the contact's activity history,
+- finds the rate limit in the API config: 10,000 requests a day on the standard plan,
+- puts both answers in your notes doc, with links to the files it checked,
+- adds a follow-up to raise before the call ends: *Ask: who owns the Salesforce admin side?*
+
+Thirty seconds later, you answer, and the prospect asks for more:
+
+```
+[14:02:58] Me: Good news, yes to both. Notes land on the Salesforce contact,
+           and you're well under the 10,000-a-day limit.
+[14:03:10] Them: Great. Could we try that with our team this week?
+[14:03:14] Me: Absolutely. Let me get that going while we talk.
+```
+
+Before the call you told Claude it could set up trial accounts. It has your product's admin API, so while you walk through pricing it:
+
+- creates a trial workspace for the prospect's company,
+- turns on the Salesforce integration and puts the workspace on the standard plan, which covers their 5,000 calls a day,
+- sends an invite to the email the prospect gave earlier in the call,
+- adds what it did to the notes doc: *Done: trial workspace created, Salesforce on, standard plan, invite sent.*
+
+```
+[14:05:40] Me: You should have an invite in your inbox now. Your workspace
+           is already set up, with Salesforce turned on and room for your
+           5,000 calls a day.
+[14:05:47] Them: Oh wow, it's there. That was fast.
+```
+
+The prospect sees the setup finished before the call ends, and you never touched the keyboard.
+
+That example is illustrative. What Claude can do depends on what you give it access to: a codebase, docs, your product's API or admin interface, a CRM or logs through MCP servers. It only takes actions like creating accounts if you allowed them before the call. The [skill](#use-it-with-claude-code) included here teaches it to watch the call and keep a notes doc of decisions, open questions and follow-ups. It quotes the speaker and time for every note, and labels anything it looked up with the source, so you can tell what was said from what Claude found.
+
+## The Transcriber
+
+One line per finished sentence, labelled by side. No bot joins the meeting and nothing is installed into the call app. `Me` is your microphone. `Them` is whatever your Mac plays, captured straight from the audio output, so it works on speakers or headphones and with any call app.
 
 ## Why Split by Side Instead of Diarization?
 
@@ -81,9 +120,9 @@ ln -s "$PWD/skills/transcribing-live-calls" ~/.claude/skills/transcribing-live-c
 
 Then, before a call, tell Claude something like:
 
-> Start transcribing my call with Acme and keep live notes in a new doc: decisions, open questions, and follow-ups. Our open questions are when the next meeting is and who owns the next step.
+> Start transcribing my call with Acme and keep live notes in a new doc. When they ask a product question, look up the answer in this repo and put it in the doc. If they want to try it, you can create a trial workspace with the admin API. Our open questions are pricing for 40 seats and who signs off on budget.
 
-Claude starts the transcriber, watches the file, and updates the doc as answers come up. Any doc tool Claude can use works: a Claude doc, Google Docs through a connector, or a local Markdown file.
+Claude starts the transcriber, watches the file, answers questions and handles the setup you allowed as they come up, and updates the doc. Any doc tool Claude can use works: a Claude doc, Google Docs through a connector, or a local Markdown file.
 
 ## How It Works
 

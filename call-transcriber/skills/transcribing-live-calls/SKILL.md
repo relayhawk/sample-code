@@ -76,6 +76,18 @@ another doc:
   place, a number with no owner).
 - Never add content the transcript does not contain. If a line is garbled, quote it
   as transcribed rather than guessing what was meant.
+- If the user asked you to answer questions as they come up, look the answer up
+  (code, docs, connected tools) while the call goes on. Write the answer under the
+  question with its source (`Answer: … (source: src/integrations/salesforce.py)`),
+  keeping it separate from what was said. If you can't confirm it, write "not found"
+  rather than guessing. The user may repeat it to a customer within seconds.
+- Take actions during the call (creating an account, changing a setting, sending an
+  invite) only when the user allowed that kind of action beforehand, and only when
+  the transcript shows the other side asked for it. Anything else goes in the doc as
+  `Suggest:` for the user to approve. Record each action as
+  `Done: … (Them, 14:03:10)`, citing the line that asked for it, and if it fails write
+  `Failed: …` right away, so the user never tells a customer something is set up
+  when it isn't.
 
 ## After the call
 
