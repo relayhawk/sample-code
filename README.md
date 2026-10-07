@@ -22,6 +22,18 @@ For details, see the [Twilio + OpenAI README](twilio-openai/).
 
 ---
 
+### [Call Transcriber: Live Transcripts of Both Sides of a Call](call-transcriber/)
+A macOS command-line tool that writes a live transcript of a Zoom, Meet or Teams call, with your mic as `Me` and the call audio as `Them`. It ships with a Claude Code skill that keeps a notes doc updated during the call.
+
+#### **Key Features:**
+- Records your mic and the Mac's audio output as separate streams, so speaker sides are never mixed up. No meeting bot.
+- Removes speaker echo, reconnects on its own, and writes a new file per call.
+- Pluggable speech-to-text: Deepgram included, with a short interface for adding others such as Whisper.
+
+For details, see the [Call Transcriber README](call-transcriber/).
+
+---
+
 ### [Claude Code Customizations](claude-code/)
 A growing collection of practical customizations for **Claude Code**, Anthropic's agentic coding tool.
 
