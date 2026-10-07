@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleIdentifier</key><string>local.call-transcriber.audiotap</string>
+<key>CFBundleName</key><string>audiotap</string>
+<key>NSAudioCaptureUsageDescription</key><string>Records call audio so it can be transcribed.</string>
+</dict></plist>
