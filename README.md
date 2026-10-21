@@ -22,6 +22,20 @@ For details, see the [Twilio + OpenAI README](twilio-openai/).
 
 ---
 
+### [Twilio ConversationRelay: Conversation State](twilio-conversation-state/)
+A voice agent on **Twilio ConversationRelay** that collects a caller's name, email address and phone number. A deterministic state engine owns the call, and a dashboard shows that state live and replays any finished call step by step.
+
+#### **Key Features:**
+- The engine, not the LLM, decides what to ask next. The LLM only interprets the caller through three tools.
+- Typed, TTS-friendly readbacks: names and emails are spelled letter by letter, phone numbers are read in groups.
+- Values are validated as they're captured, and phone numbers are normalized to E.164. Callers can answer out of order, correct a value, or accept their caller ID.
+- Every transcript line, tool call and state change is stored as one timeline per call, and replay syncs to the call recording.
+- Runs without a phone: a text-mode simulator speaks the ConversationRelay protocol.
+
+For details, see the [Conversation State README](twilio-conversation-state/).
+
+---
+
 ### [Call Transcriber: Live Transcripts of Both Sides of a Call](call-transcriber/)
 A macOS command-line tool that writes a live transcript of a Zoom, Meet or Teams call, with your mic as `Me` and the call audio as `Them`. It ships with a Claude Code skill that keeps a notes doc updated during the call.
 
