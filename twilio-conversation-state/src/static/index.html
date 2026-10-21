@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversation State</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232f5bea'/><path d='M9 21l5-10 4 7 2-3 3 6' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M9 21l5-10 4 7 2-3 3 6" /></svg>
+      </span>
+      <div>
+        <div class="brand-title">Conversation State</div>
+        <div class="brand-sub">Twilio ConversationRelay · <span id="company">…</span></div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="dial" id="dialInfo" hidden>
+        <span class="dial-label">Call</span>
+        <a class="dial-number" id="dialNumber" href="#"></a>
+      </div>
+      <form class="callme" id="callMe" hidden>
+        <input id="callMeTo" type="tel" placeholder="+1 555 123 4567" aria-label="Phone number to call" required />
+        <button type="submit" class="btn btn-primary">Call me</button>
+      </form>
+      <span class="socket" id="socketState" title="Live updates"><span class="dot"></span><span class="socket-label">Connecting</span></span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <h2>Calls</h2>
+        <span class="count" id="callCount">0</span>
+      </div>
+      <ul class="call-list" id="callList"></ul>
+    </aside>
+
+    <main class="main" id="main">
+      <section class="empty-state" id="emptyState">
+        <div class="empty-card">
+          <h1>Waiting for a call</h1>
+          <p>Point a Twilio number's voice webhook at the URL below, then call it. The call shows up here the moment it connects.</p>
+          <code id="voiceUrl" class="url"></code>
+          <p class="muted">Calls you've already finished are listed on the left. Pick one to replay it step by step.</p>
+        </div>
+      </section>
+
+      <section class="call" id="callView" hidden>
+        <div class="call-head">
+          <div class="call-who">
+            <h1 id="callTitle">Unknown caller</h1>
+            <div class="call-meta">
+              <span id="callStatus" class="pill"></span>
+              <span id="callFrom"></span>
+              <span class="sep">·</span>
+              <span id="callStarted"></span>
+              <span class="sep">·</span>
+              <span id="callDuration" class="mono"></span>
+            </div>
+          </div>
+          <code class="sid" id="callSid" title="Call SID"></code>
+        </div>
+
+        <ol class="flow" id="flowRail" aria-label="Call steps"></ol>
+
+        <div class="grid">
+          <div class="card convo">
+            <div class="card-head">
+              <h2>Conversation</h2>
+              <div class="legend">
+                <span><i class="lg lg-caller"></i>Caller</span>
+                <span><i class="lg lg-llm"></i>LLM</span>
+                <span><i class="lg lg-engine"></i>Engine</span>
+                <span><i class="lg lg-tool"></i>Tool</span>
+              </div>
+            </div>
+            <div class="transcript" id="transcript"></div>
+          </div>
+
+          <div class="side">
+            <div class="card">
+              <div class="card-head"><h2>Collected state</h2><span class="muted small" id="turnLabel"></span></div>
+              <table class="fields">
+                <thead><tr><th>Field</th><th>Value</th><th>Status</th></tr></thead>
+                <tbody id="fieldRows"></tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>Engine directive</h2></div>
+              <div id="directive" class="directive"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2>Event</h2>
+                <button class="btn btn-ghost btn-sm" id="toggleRaw" type="button">Show JSON</button>
+              </div>
+              <div id="eventDetail" class="event-detail"></div>
+              <pre id="eventRaw" class="raw" hidden></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="player" id="player" hidden>
+    <div class="player-controls">
+      <button class="btn btn-icon" id="btnFirst" type="button" title="First event (Home)" aria-label="First event">⏮</button>
+      <button class="btn btn-icon" id="btnPrev" type="button" title="Previous event (←)" aria-label="Previous event">‹</button>
+      <button class="btn btn-icon btn-play" id="btnPlay" type="button" title="Play (Space)" aria-label="Play">▶</button>
+      <button class="btn btn-icon" id="btnNext" type="button" title="Next event (→)" aria-label="Next event">›</button>
+      <button class="btn btn-live" id="btnLive" type="button" title="Jump to live (End)">● Live</button>
+    </div>
+    <div class="scrubber">
+      <div class="ticks" id="ticks" aria-hidden="true"></div>
+      <input type="range" id="scrub" min="0" max="0" value="0" aria-label="Timeline position" />
+    </div>
+    <div class="player-pos">
+      <span id="posLabel" class="mono">0 / 0</span>
+      <select id="speed" aria-label="Playback speed">
+        <option value="1">1×</option><option value="2">2×</option><option value="4">4×</option>
+      </select>
+      <span id="audioState" class="muted small"></span>
+    </div>
+    <audio id="audio" preload="metadata"></audio>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+services:
+  api:
+    build: .
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+      - ./data:/app/data # call history + cached recordings survive restarts
+    command: ["uvicorn", "src.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    networks:
+      - twilio-network
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "http"
+      - "--url=${PUBLIC_URL}"
+      - "api:8000"
+    env_file: .env
+    ports:
+      - "4040:4040" # ngrok inspector
+    networks:
+      - twilio-network
+
+networks:
+  twilio-network:
+    driver: bridge
